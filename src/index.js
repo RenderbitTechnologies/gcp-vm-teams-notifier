@@ -54,6 +54,8 @@ functions.cloudEvent("processVmEvent", async (cloudEvent) => {
     return;
   }
 
+  const consoleUrl = `https://console.cloud.google.com/compute/instancesDetail/zones/${zone}/instances/${vmName}?project=${projectId}`;
+
   // 4. Construct Teams AdaptiveCard Payload
   const adaptiveCard = {
     type: "message",
@@ -75,7 +77,7 @@ functions.cloudEvent("processVmEvent", async (cloudEvent) => {
             {
               type: "FactSet",
               facts: [
-                { title: "VM Name:", value: vmName },
+                { title: "VM Name:", value: `[${vmName}](${consoleUrl})` },
                 { title: "Project:", value: projectId },
                 { title: "Zone:", value: zone },
                 { title: "Created By:", value: creator },
@@ -86,7 +88,7 @@ functions.cloudEvent("processVmEvent", async (cloudEvent) => {
             {
               type: "Action.OpenUrl",
               title: "View in GCP Console",
-              url: `https://console.cloud.google.com/compute/instancesDetail/zones/${zone}/instances/${vmName}?project=${projectId}`,
+              url: consoleUrl,
             },
           ],
         },
