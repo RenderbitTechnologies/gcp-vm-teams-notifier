@@ -1,0 +1,15 @@
+project_id = "my-central-hub-project-id"
+
+region = "us-central1"
+
+# The project(s) to attach the Log Sinks to
+projects_to_monitor = [
+  "my-production-project-id",
+  "my-development-project-id"
+]
+
+# Provide a 'default' destination, along with any optional per-project overrides
+teams_webhook_map = {
+  "default"                   = "https://m365x...webhook.office.com/webhookb2/..."
+  "my-production-project-id"  = "https://m365x...webhook.office.com/webhookb2/... (prod channel)"
+}

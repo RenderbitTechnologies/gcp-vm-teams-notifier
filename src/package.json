@@ -1,0 +1,12 @@
+{
+  "name": "gcp-vm-teams-notifier",
+  "version": "1.0.0",
+  "description": "Cloud Function to format and forward GCP VM Creation events to MS Teams",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions-framework --target=processVmEvent --signature-type=event"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.4.0"
+  }
+}
