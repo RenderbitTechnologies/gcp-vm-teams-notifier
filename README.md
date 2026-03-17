@@ -93,3 +93,54 @@ Type `yes` when prompted by Terraform to apply the changes.
 1. **A VM is created in GCP Compute Engine:** the `v1.compute.instances.insert` method generates an Audit Log event.
 2. **Log Sink:** routes this matching Audit Log from the project to a central Pub/Sub topic spanning the organization/projects.
 3. **Cloud Function V2 (Node.js 22):** parses the JSON audit log, identifies the appropriate generic Teams webhook URL from its `WEBHOOK_MAP` environment variable based on project ID, constructs an AdaptiveCard payload, and performs an HTTP POST request to Teams.
+
+## Local Development and Testing
+
+You can run and test the Cloud Function locally using the [Functions Framework for Node.js](https://github.com/GoogleCloudPlatform/functions-framework-nodejs).
+
+### 1. Install Dependencies
+
+Navigate to the `src` directory and install the required Node.js packages:
+
+```bash
+cd src
+npm install
+```
+
+### 2. Start the Local Server
+
+Set the required environment variable for your webhook map and start the functions framework:
+
+```bash
+# Set your webhook map (can use the default one for testing)
+export WEBHOOK_MAP='{"default": "https://your.webhook.url.copied.from.teams"}'
+
+# Start the local server
+npm start
+```
+
+The function will start listening on `localhost:8080`.
+
+### 3. Send a Mock Event
+
+In a new terminal window, you can simulate a Pub/Sub event by sending an HTTP POST request to your local server. The payload needs to be a valid CloudEvent with the audit log data base64 encoded inside `message.data`.
+
+Here is an example `curl` command to test the function:
+
+```bash
+curl -X POST http://localhost:8080 \
+  -H "Content-Type: application/json" \
+  -H "ce-id: mock-event-id-123" \
+  -H "ce-source: //pubsub.googleapis.com/" \
+  -H "ce-specversion: 1.0" \
+  -H "ce-type: google.cloud.pubsub.topic.v1.messagePublished" \
+  -d '{
+        "message": {
+          "data": "ewogICJwcm90b1BheWxvYWQiOiB7CiAgICAiYXV0aGVudGljYXRpb25JbmZvIjogewogICAgICAicHJpbmNpcGFsRW1haWwiOiAidGVzdC51c2VyQGV4YW1wbGUuY29tIgogICAgfSwKICAgICJyZXNvdXJjZU5hbWUiOiAicHJvamVjdHMvbXktcHJvamVjdC96b25lcy91cy1jZW50cmFsMS1hL2luc3RhbmNlcy90ZXN0LXZtLWxvY2FsIgogIH0sCiAgInJlc291cmNlIjogewogICAgImxhYmVscyI6IHsKICAgICAgInByb2plY3RfaWQiOiAibXktcHJvamVjdCIsCiAgICAgICJpbnN0YW5jZV9pZCI6ICIxMjM0NTY3ODkwIiwKICAgICAgInpvbmUiOiAidXMtY2VudHJhbDEtYSIKICAgIH0KICB9Cn0="
+        }
+      }'
+```
+
+*(The base64 string above decodes to a mock GCP Audit Log JSON payload for a VM creation).*
+
+Check the terminal running `npm start` to see the function logs, and verify that a message was sent to your configured MS Teams webhook!
