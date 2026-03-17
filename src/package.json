@@ -7,6 +7,6 @@
     "start": "functions-framework --target=processVmEvent --signature-type=event"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "^3.4.0"
+    "@google-cloud/functions-framework": "^5.0.2"
   }
 }
