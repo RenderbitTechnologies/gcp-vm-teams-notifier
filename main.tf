@@ -30,7 +30,7 @@ resource "google_logging_project_sink" "vm_creation_sink" {
   destination            = "pubsub.googleapis.com/projects/${var.project_id}/topics/${google_pubsub_topic.vm_alerts.name}"
 
   # Filter for Compute Engine instance insertion audit logs
-  filter                 = "protoPayload.methodName=\"v1.compute.instances.insert\" resource.type=\"gce_instance\" severity=NOTICE"
+  filter                 = "protoPayload.methodName:\"compute.instances.insert\" resource.type=\"gce_instance\" severity=NOTICE"
   unique_writer_identity = true
 }
 
