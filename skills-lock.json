@@ -15,6 +15,11 @@
       "source": "github/awesome-copilot",
       "sourceType": "github",
       "computedHash": "2607fc60629b82b257136dd2a7a373f0a4466c0b49df7746d845d59313c99b21"
+    },
+    "github-issue-creator": {
+      "source": "microsoft/agent-skills",
+      "sourceType": "github",
+      "computedHash": "1d19ed1e52436c28746d35f53113050d09b79c090a8bd3a6148b4570a3531374"
     }
   }
 }
