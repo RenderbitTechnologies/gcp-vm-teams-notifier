@@ -9,6 +9,11 @@ terraform {
       version = "~> 2.7.1"
     }
   }
+
+  backend "gcs" {
+    bucket = "hosting-vms-terraform-state"
+    prefix = "terraform/state"
+  }
 }
 
 provider "google" {
