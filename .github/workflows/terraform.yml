@@ -1,0 +1,50 @@
+name: Terraform Plan & Apply
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  TF_VAR_project_id: ${{ secrets.TF_VAR_PROJECT_ID }}
+  TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
+  TF_VAR_projects_to_monitor: ${{ secrets.TF_VAR_PROJECTS_TO_MONITOR }}
+  TF_VAR_teams_webhook_map: ${{ secrets.TF_VAR_TEAMS_WEBHOOK_MAP }}
+  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Cache Terraform providers
+        uses: actions/cache@v4
+        with:
+          path: .terraform/providers
+          key: terraform-providers-${{ hashFiles('.terraform.lock.hcl') }}
+          restore-keys: |
+            terraform-providers-
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
