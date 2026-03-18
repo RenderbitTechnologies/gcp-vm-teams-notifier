@@ -99,6 +99,18 @@ Type `yes` when prompted by Terraform to apply the changes.
 2. **Log Sink:** routes this matching Audit Log from the project to a central Pub/Sub topic spanning the organization/projects.
 3. **Cloud Function V2 (Node.js 22):** parses the JSON audit log, identifies the appropriate generic Teams webhook URL from its `WEBHOOK_MAP` environment variable based on project ID, constructs an AdaptiveCard payload, and performs an HTTP POST request to Teams.
 
+## CI/CD Workflow
+
+This repository includes a GitHub Actions workflow (`terraform.yml`) that automatically plans and applies the Terraform configuration when changes are pushed to the `main` branch.
+
+To use this workflow, configure the following secrets in your GitHub repository:
+
+- `GOOGLE_CREDENTIALS`: A minimal permissions Google Cloud Service Account JSON key.
+- `TF_VAR_PROJECT_ID`: Your central hub project ID.
+- `TF_VAR_REGION`: The GCP region to deploy to.
+- `TF_VAR_PROJECTS_TO_MONITOR`: A JSON string array of project IDs to monitor (e.g., `["project-a", "project-b"]`).
+- `TF_VAR_TEAMS_WEBHOOK_MAP`: A JSON map mapping project IDs to their respective Teams webhook URLs.
+
 ## Local Development and Testing
 
 You can run and test the Cloud Function locally using the [Functions Framework for Node.js](https://github.com/GoogleCloudPlatform/functions-framework-nodejs).
