@@ -1,5 +1,10 @@
 # GCP VM to MS Teams Notifier
 
+[![Terraform CI](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/terraform.yml/badge.svg)](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/terraform.yml)
+![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.5-623CE4.svg?logo=terraform)
+![Node.js](https://img.shields.io/badge/Node.js-22-339933.svg?logo=nodedotjs)
+![Functions Framework](https://img.shields.io/badge/Functions%20Framework-%5E5.0.2-4285F4.svg?logo=googlecloud)
+
 A Terraform module and Node.js Cloud Function to monitor Google Cloud Projects for Virtual Machine creations and send an AdaptiveCard notification to Microsoft Teams channels.
 
 ## Requirements
