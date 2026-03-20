@@ -9,10 +9,10 @@ A Terraform module and Node.js Cloud Function to monitor Google Cloud Projects f
 
 ## Requirements
 
-- Terraform (v1.5+ recommended)
-- Google Cloud SDK (`gcloud`) authenticated with sufficient privileges to create Pub/Sub topics, Cloud Functions, and Project Log Sinks.
+- [Terraform](https://developer.hashicorp.com/terraform) (v1.5+ recommended)
+- [Google Cloud SDK (`gcloud`)](https://cloud.google.com/sdk) authenticated with sufficient privileges to create Pub/Sub topics, Cloud Functions, and Project Log Sinks.
 - A central GCP project where the function will live. [**Cloud Logging API**](https://cloud.google.com/logging), [**Cloud Functions API**](https://cloud.google.com/functions) and [**Eventarc API**](https://cloud.google.com/eventarc) must be enabled on this project.
-- Microsoft Teams Incoming Webhook URLs for each environment or a default channel.
+- [Microsoft Teams Incoming Webhook URLs](https://support.microsoft.com/en-us/office/create-incoming-webhooks-with-workflows-for-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498) for each environment or a default channel.
 
 ## Setup Instructions
 
