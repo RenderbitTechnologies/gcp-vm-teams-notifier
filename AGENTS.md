@@ -34,6 +34,10 @@ Local function: `WEBHOOK_MAP='{"default":"https://example.invalid/webhook"}' npm
 - The backend bucket `hosting-vms-terraform-state` is hardcoded in `main.tf` and must already exist.
 - Keep real webhook URLs, `*.tfvars`, and credentials out of tracked files; `.env.example` is deliberately dummy.
 
+## Cloud Agent environment
+
+Saved install/start scripts live under `.cursor/cloud-agent-install.sh` (Terraform 1.16.1, `npm ci`, `terraform init -backend=false -lockfile=readonly`) and `.cursor/cloud-agent-start.sh` (Functions Framework on `:8080` with a dummy `WEBHOOK_MAP`). After boot, POST the README mock Pub/Sub `curl` to exercise the handler end to end; Teams POST failures against `example.invalid` are expected.
+
 ## Existing docs
 
 `CLAUDE.md`, `GEMINI.md`, `README.md`, and `.github/copilot-instructions.md` overlap heavily with each other. `.github/copilot-instructions.md` claims there is no unit test suite — tests exist in `src/test/`.
