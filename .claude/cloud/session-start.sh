@@ -19,10 +19,16 @@ fi
 
 # Terraform providers for `terraform validate`. The GCS backend needs GCP
 # credentials, so it is skipped; -lockfile=readonly keeps the cloud VM from
-# adding linux hashes to .terraform.lock.hcl.
-if command -v terraform >/dev/null && [ ! -d .terraform/providers ]; then
-  terraform init -backend=false -input=false -lockfile=readonly >/dev/null ||
+# adding linux hashes to .terraform.lock.hcl. Re-runs init until it succeeds
+# and whenever the lockfile or provider constraints change.
+hashes=.terraform/.session-start.sha256
+if command -v terraform >/dev/null && ! sha256sum --check --status "$hashes" 2>/dev/null; then
+  rm -f "$hashes"
+  if terraform init -backend=false -input=false -lockfile=readonly >/dev/null; then
+    sha256sum .terraform.lock.hcl main.tf > "$hashes" || rm -f "$hashes"
+  else
     echo "terraform init failed; is registry.terraform.io in the environment's allowed domains?" >&2
+  fi
 fi
 
 exit 0
