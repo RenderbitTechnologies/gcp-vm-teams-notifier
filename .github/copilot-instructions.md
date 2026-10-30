@@ -12,6 +12,8 @@ terraform plan -out=tfplan
 terraform apply tfplan
 ```
 
+`terraform init` needs the GCS state bucket and GCP credentials; use `terraform init -backend=false` when only running `fmt`/`validate` locally.
+
 For local Cloud Function work:
 
 ```bash
@@ -37,7 +39,15 @@ curl -X POST http://localhost:8080 \
       }'
 ```
 
-There is no automated unit test suite or npm lint script in this repository. The existing verification flow is `terraform validate` plus the manual local Cloud Function test above.
+The Cloud Function has a unit test suite (Node's built-in runner) in `src/test/`; there is no npm lint script:
+
+```bash
+cd src
+npm ci
+npm test
+```
+
+`.github/workflows/ci.yml` runs `npm test`, `terraform fmt -check -recursive`, and `terraform validate` on PRs.
 
 ## High-level architecture
 
@@ -47,7 +57,7 @@ This repository is split between Terraform-managed infrastructure at the root an
 - The same Terraform file also creates one `google_logging_project_sink` per monitored project using `for_each = toset(var.projects_to_monitor)`. Each sink forwards `compute.instances.insert` audit logs into the central Pub/Sub topic, and a matching IAM binding grants that sink's `writer_identity` the `roles/pubsub.publisher` role.
 - `data.archive_file.function_zip` packages the entire `src/` directory into `function-source.zip`. Terraform uploads that zip to Cloud Storage and deploys the function from the uploaded object.
 - `src/index.js` registers the `processVmEvent` CloudEvent handler. It expects a Pub/Sub-delivered CloudEvent, base64-decodes `cloudEvent.data.message.data`, parses the GCP audit log JSON, extracts VM details, resolves the Teams webhook, builds an Adaptive Card, and posts it to Microsoft Teams.
-- `.github/workflows/terraform.yml` is the deployment path used in CI: on pushes to `main` and on `workflow_dispatch`, it authenticates to GCP, runs `terraform init`, `terraform plan -out=tfplan`, and `terraform apply -auto-approve tfplan`.
+- `.github/workflows/terraform.yml` is the deployment path used in CI: on pushes to `main` and on `workflow_dispatch`, it calls `ci.yml` first, then authenticates to GCP, runs `terraform init`, `terraform plan -out=tfplan`, and `terraform apply -auto-approve tfplan`.
 
 ## Key conventions
 
