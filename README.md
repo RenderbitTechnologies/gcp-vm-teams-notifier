@@ -102,7 +102,7 @@ Type `yes` when prompted by Terraform to apply the changes.
 
 ## CI/CD Workflow
 
-The `ci.yml` workflow runs on every pull request and on pushes to non-`main` branches. It runs the Cloud Function unit tests (`npm test` in `src/`) and checks the Terraform configuration with `terraform fmt -check` and `terraform validate`. It needs no secrets.
+The `ci.yml` workflow runs on every pull request (and on manual `workflow_dispatch`), and `terraform.yml` calls it before each deploy from `main`. It runs the Cloud Function unit tests (`npm test` in `src/`) and checks the Terraform configuration with `terraform fmt -check` and `terraform validate`. It needs no secrets.
 
 The `terraform.yml` workflow automatically plans and applies the Terraform configuration when changes are pushed to the `main` branch. It runs the CI checks first and only deploys if they pass.
 
