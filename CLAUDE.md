@@ -158,7 +158,7 @@ Events are processed in `src/index.js`:
 
 ## CI/CD Configuration
 
-`ci.yml` runs on pull requests and pushes to non-`main` branches: `npm test` in `src/`, `terraform fmt -check -recursive`, and `terraform validate` (with `init -backend=false`, so no secrets are needed). It is also a reusable workflow that `terraform.yml` calls before deploying.
+`ci.yml` runs on pull requests (plus manual `workflow_dispatch`): `npm test` in `src/`, `terraform fmt -check -recursive`, and `terraform validate` (with `init -backend=false`, so no secrets are needed). It is also a reusable workflow that `terraform.yml` calls before deploying.
 
 GitHub Actions automatically deploys when changes are pushed to `main`, but only after the CI checks pass. Required secrets:
 
