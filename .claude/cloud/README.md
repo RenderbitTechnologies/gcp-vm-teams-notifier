@@ -22,16 +22,9 @@ The default list already covers `releases.hashicorp.com` (Terraform and
 provider downloads) and `registry.npmjs.org`. `registry.terraform.io` is not in
 it, and `terraform init` needs it to resolve providers.
 
-**Environment variables:**
-
-```text
-WEBHOOK_MAP='{"default":"https://example.invalid/webhook"}'
-CHECKPOINT_DISABLE=1
-TF_IN_AUTOMATION=1
-```
-
-`WEBHOOK_MAP` lets `npm start` in `src/` run against a dummy webhook. Anyone
-using the environment can read these values, so don't add `GOOGLE_CREDENTIALS`,
+**Environment variables:** paste the contents of
+[`.env.example`](../../.env.example), which explains each value. Anyone using
+the environment can read these values, so don't add `GOOGLE_CREDENTIALS`,
 `TF_VAR_*` or real Teams webhook URLs.
 
 **Setup script:** choose [`setup.sh`](setup.sh). It installs Terraform; Node.js
