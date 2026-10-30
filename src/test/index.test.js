@@ -174,6 +174,21 @@ describe("processVmEvent", () => {
     assert.equal(consoleError.mock.callCount(), 1);
   });
 
+  for (const [label, data] of [
+    ["the event has no data", undefined],
+    ["the event has no message", {}],
+    ["the message data is empty", { message: { data: "" } }],
+  ]) {
+    it(`does not call Teams when ${label}`, async () => {
+      const fetchMock = mockFetch();
+
+      await processVmEvent({ id: "test-event-1", data });
+
+      assert.equal(fetchMock.mock.callCount(), 0);
+      assert.equal(consoleError.mock.callCount(), 1);
+    });
+  }
+
   it("does not call Teams when WEBHOOK_MAP is unset", async () => {
     delete process.env.WEBHOOK_MAP;
     const fetchMock = mockFetch();

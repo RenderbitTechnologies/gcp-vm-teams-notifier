@@ -4,7 +4,11 @@ functions.cloudEvent("processVmEvent", async (cloudEvent) => {
   console.log(`Received Pub/Sub Event: ${cloudEvent.id}`);
 
   // 1. Decode the Pub/Sub Message
-  const base64Data = cloudEvent.data.message.data;
+  const base64Data = cloudEvent.data?.message?.data;
+  if (!base64Data) {
+    console.error("Pub/Sub message has no data to decode");
+    return;
+  }
   const decodedData = Buffer.from(base64Data, "base64").toString("utf-8");
   let auditLog;
 
