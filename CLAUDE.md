@@ -19,8 +19,11 @@ This project deploys a GCP monitoring solution that detects Virtual Machine crea
 ├── terraform.tfvars.example         # Example configuration (copy to terraform.tfvars)
 ├── src/
 │   ├── index.js                     # Cloud Function handler
-│   └── package.json                 # Node.js dependencies
-└── .github/workflows/terraform.yml  # CI/CD pipeline
+│   ├── package.json                 # Node.js dependencies
+│   └── test/index.test.js           # Unit tests (node:test, fetch mocked)
+└── .github/workflows/
+    ├── ci.yml                       # Tests + terraform fmt/validate on PRs
+    └── terraform.yml                # Deploy on push to main (runs ci.yml first)
 ```
 
 ## Common Development Commands
@@ -43,6 +46,16 @@ terraform fmt
 # Validate Terraform syntax
 terraform validate
 ```
+
+### Unit Tests
+
+```bash
+cd src
+npm install
+npm test   # node --test; runs src/test/*.test.js
+```
+
+Tests load the handler via `getFunction("processVmEvent")` from `@google-cloud/functions-framework/testing` and mock `globalThis.fetch`. The `src/test/` directory is excluded from the deployed function zip (`excludes` in `main.tf`).
 
 ### Workflow: Testing Changes Locally Before Deployment
 
@@ -145,7 +158,9 @@ Events are processed in `src/index.js`:
 
 ## CI/CD Configuration
 
-GitHub Actions automatically deploys when changes are pushed to `main`. Required secrets:
+`ci.yml` runs on pull requests and pushes to non-`main` branches: `npm test` in `src/`, `terraform fmt -check -recursive`, and `terraform validate` (with `init -backend=false`, so no secrets are needed). It is also a reusable workflow that `terraform.yml` calls before deploying.
+
+GitHub Actions automatically deploys when changes are pushed to `main`, but only after the CI checks pass. Required secrets:
 
 - `GOOGLE_CREDENTIALS`: Service Account JSON key with minimal permissions
 - `TF_VAR_project_id`: Central GCP project ID
@@ -186,6 +201,7 @@ Terraform uses a GCS backend bucket `hosting-vms-terraform-state`. Ensure this b
 
 When making changes, verify:
 
+- [ ] Unit tests pass (`npm test` in `src/`)
 - [ ] Local function starts successfully (`npm start`)
 - [ ] Mock Pub/Sub event triggers function correctly
 - [ ] Teams webhook receives formatted AdaptiveCard

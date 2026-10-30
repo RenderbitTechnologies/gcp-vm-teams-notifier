@@ -1,5 +1,6 @@
 # GCP VM to MS Teams Notifier
 
+[![CI](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/ci.yml/badge.svg)](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/ci.yml)
 [![Terraform CI](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/terraform.yml/badge.svg)](https://github.com/RenderbitTechnologies/gcp-vm-teams-notifier/actions/workflows/terraform.yml)
 ![Terraform](https://img.shields.io/badge/Terraform-%3E%3D1.5-623CE4.svg?logo=terraform)
 ![Node.js](https://img.shields.io/badge/Node.js-22-339933.svg?logo=nodedotjs)
@@ -101,7 +102,9 @@ Type `yes` when prompted by Terraform to apply the changes.
 
 ## CI/CD Workflow
 
-This repository includes a GitHub Actions workflow (`terraform.yml`) that automatically plans and applies the Terraform configuration when changes are pushed to the `main` branch.
+The `ci.yml` workflow runs on every pull request and on pushes to non-`main` branches. It runs the Cloud Function unit tests (`npm test` in `src/`) and checks the Terraform configuration with `terraform fmt -check` and `terraform validate`. It needs no secrets.
+
+The `terraform.yml` workflow automatically plans and applies the Terraform configuration when changes are pushed to the `main` branch. It runs the CI checks first and only deploys if they pass.
 
 To use this workflow, configure the following secrets in your GitHub repository:
 
@@ -112,6 +115,18 @@ To use this workflow, configure the following secrets in your GitHub repository:
 - `TF_VAR_TEAMS_WEBHOOK_MAP`: A JSON map mapping project IDs to their respective Teams webhook URLs.
 
 ## Local Development and Testing
+
+### Unit Tests
+
+The Cloud Function has a unit test suite in `src/test/`, written with Node's built-in test runner. It mocks `fetch`, so no Teams webhook or GCP access is needed:
+
+```bash
+cd src
+npm install
+npm test
+```
+
+### Running the Function Locally
 
 You can run and test the Cloud Function locally using the [Functions Framework for Node.js](https://github.com/GoogleCloudPlatform/functions-framework-nodejs).
 
